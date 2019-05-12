@@ -23,6 +23,7 @@ public class Reco extends Activity
 	Recorder rec = null;
 	Alignement alignement = null;
 	DAP dap = null;
+	AlignementSemi alignementSemi = null;
 	TextView mot = null;
 	TextView compteur = null;
 	Button enregistrer = null;
@@ -35,6 +36,8 @@ public class Reco extends Activity
 	ArrayList<String> tabPhrase = null;
 	ArrayList<String> tabPhoneme = null;
 	ArrayList<String> tabDap = null;
+	ArrayList<String> tabSemi = null;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -58,6 +61,8 @@ public class Reco extends Activity
 		{
 			tabPhoneme = new ArrayList<>();
 			tabDap = new ArrayList<>();
+			tabSemi = new ArrayList<>();
+			alignementSemi = new AlignementSemi(this);
 			dap = new DAP(this);
 			exo = new ExerciceMot(nbtest, this);
 		}
@@ -177,6 +182,8 @@ public class Reco extends Activity
 		{
 			alignement = new Alignement(Reco.this, Alignement.PHONEME);
 			tabPhoneme = alignement.convertir(wav);
+			alignementSemi = new AlignementSemi(Reco.this);
+			tabSemi = alignementSemi.convertir(wav, tabPhoneme); // On renvoie les resultat de l'alignement pour récup les frontières
 			dap = new DAP(Reco.this);
 			tabDap = dap.convertir(wav);
 		}
@@ -197,6 +204,13 @@ public class Reco extends Activity
 			FileWriter writer = new FileWriter(nom + "-score-phoneme.txt");
 
 			for (String str : tabPhoneme)
+				writer.write(str + "\n");
+
+			writer.close();
+
+			writer = new FileWriter(nom + "-score-semi.txt");
+
+			for (String str : tabSemi)
 				writer.write(str + "\n");
 
 			writer.close();
